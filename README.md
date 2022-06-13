@@ -327,5 +327,6 @@ Make two linkedlists storing each X and Y data.
      
 ### Graph (y = wx + b)
 C language W, b values Graph
+     
 ![009](https://user-images.githubusercontent.com/87653966/173314309-7b13268d-f9d3-4366-9048-14ac386ac308.png)
 
