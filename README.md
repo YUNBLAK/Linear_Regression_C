@@ -183,6 +183,148 @@ Make two linkedlists storing each X and Y data.
 
     }
     
-    
-    
+     
+### LinearRegression.c
 
+    #include <stdio.h>
+    #include <string.h>
+    #include <stdlib.h>
+    #include <sys/stat.h>
+    #include <math.h>
+    #include "csvlinkedlist.h"
+
+    extern List xvalues();
+    extern List yvalues();
+
+    double costFunction(List x, List y, double w, double b){
+        double sum = 0;
+        while(x.head != NULL){
+            sum = sum + (((w * x.head->data + b - y.head->data) / 2) / y.size);
+            y.head = y.head->next;
+            x.head = x.head->next;
+        }
+        return sum;
+    }
+
+    double gradientW(List x, List y, double w, double b){
+        double sum = 0;
+        while(x.head != NULL){
+            sum = sum + ((w * x.head->data + b - y.head->data) * x.head->data  / y.size);
+            y.head = y.head->next;
+            x.head = x.head->next;
+        }
+        return sum;
+    }
+
+    double gradientB(List x, List y, double w, double b){
+        double sum = 0;
+        while(x.head != NULL){
+            sum = sum + ((w * x.head->data + b) /  y.size);
+            y.head = y.head->next;
+            x.head = x.head->next;
+        }
+        return sum;
+    }
+
+    EQUATION equation(int iteration, double rate){
+        int i;
+        double w = 0.0;
+        double b = 0.0;
+        for(i = 0; i < iteration; i++){
+            double gw = gradientW(xvalues(), yvalues(), w, b);
+            double gb = gradientB(xvalues(), yvalues(), w, b);
+            w = w - gw * rate;
+            b = b - gb * rate;
+        }
+        EQUATION *temp = malloc(sizeof(EQUATION));
+        temp->w = w;
+        temp->b = b;
+
+        return *temp;
+    }
+
+
+    // Root Mean Square Deviation
+    double RMSET(List x, List y, double w, double b){
+        double rm = 0.0;
+        while(x.head != NULL){
+            rm = rm + (y.head->data - (x.head->data * w + b)) * (y.head->data - (x.head->data * w + b));
+            x.head = x.head->next;
+            y.head = y.head->next;
+        }
+        rm = rm / x.size;
+        rm = sqrt(rm);
+        return rm;
+    }
+
+    void printRMSE(double w, double b){
+        double r = RMSET(xvalues(), yvalues(), w, b);
+        printf("%.16f\n", r);
+    }
+    
+    
+#### Additional Explanation   
+
+<img width="1000" alt="L033" src="https://user-images.githubusercontent.com/87653966/172146476-3e2be449-46aa-4e35-9acc-48fe0509f8b5.png">    
+    
+    double costFunction(List x, List y, double w, double b){
+        double sum = 0;
+        while(x.head != NULL){
+            sum = sum + (((w * x.head->data + b - y.head->data) / 2) / y.size);
+            y.head = y.head->next;
+            x.head = x.head->next;
+        }
+        return sum;
+    }
+    
+<img width="1000" alt="L034" src="https://user-images.githubusercontent.com/87653966/172147204-54486f8c-435f-407c-8a4e-2192cb0aeee4.png">
+
+    double gradientW(List x, List y, double w, double b){
+            double sum = 0;
+            while(x.head != NULL){
+                sum = sum + ((w * x.head->data + b - y.head->data) * x.head->data  / y.size);
+                y.head = y.head->next;
+                x.head = x.head->next;
+            }
+            return sum;
+        }
+
+    double gradientB(List x, List y, double w, double b){
+        double sum = 0;
+        while(x.head != NULL){
+            sum = sum + ((w * x.head->data + b) /  y.size);
+            y.head = y.head->next;
+            x.head = x.head->next;
+        }
+        return sum;
+    }
+
+    EQUATION equation(int iteration, double rate){
+        int i;
+        double w = 0.0;
+        double b = 0.0;
+        for(i = 0; i < iteration; i++){
+            double gw = gradientW(xvalues(), yvalues(), w, b);
+            double gb = gradientB(xvalues(), yvalues(), w, b);
+            w = w - gw * rate;
+            b = b - gb * rate;
+        }
+        EQUATION *temp = malloc(sizeof(EQUATION));
+        temp->w = w;
+        temp->b = b;
+
+        return *temp;
+    }
+   
+    
+### Results
+![006](https://user-images.githubusercontent.com/87653966/173313027-88d12aed-c89b-4989-9aac-b0d9f96690c3.png)
+     
+     
+### Compare to Python
+![007](https://user-images.githubusercontent.com/87653966/173313853-84cba04b-6503-493b-85d4-b2788cdb7edf.png)
+     
+     
+### Graph (y = wx + b)
+C language W, b values Graph
+![008](https://user-images.githubusercontent.com/87653966/173314135-e1793d2b-d31d-4b0f-8988-57d8f092e396.png)
